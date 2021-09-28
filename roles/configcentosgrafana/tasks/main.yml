@@ -1,0 +1,15 @@
+---
+- name: Copying Grafana repo to Remote (CentOS)
+  copy:
+    src: "{{ grafana_repo }}"
+    dest: /etc/yum.repos.d/grafana.repo
+    owner: isaacsapelino-tip
+    group: isaacsapelino-tip
+
+- name: Install and Update Grafana (CentOS)
+  dnf:
+    name: grafana
+    state: latest
+    update_cache: yes
+
+

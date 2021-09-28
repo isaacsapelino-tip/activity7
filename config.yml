@@ -1,0 +1,15 @@
+# Vars
+# Elastic Search Vars
+es_centos_rpm: elasticsearch.repo
+remote_user: isaacsapelino-tip
+
+# Nagios User
+nagios_user: nagios
+nagios_group: nagcmd
+nagios_pass: thisismypass
+
+# Grafana
+grafana_repo: grafana.repo
+
+# prometheus 
+src: prometheus.service

@@ -1,0 +1,241 @@
+---
+- name: Activity 7 by Isaac Sapelino
+  hosts: elasticsearch
+  tags: elasticsearch,ubuntu,centos
+  tasks:
+    - name: Include variables
+      include_vars:
+        file: config.yml
+
+    - name: Install Elasticsearch dependency (ubuntu)
+      include_role:
+        name: installubuntupkg
+      vars:
+        package: openjdk-8-jdk
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install Nginx (ubuntu)
+      include_role:
+        name: installubuntupkg
+      vars:
+        package: nginx
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Stopping Apache2 (ubuntu)
+      service:
+        name: apache2
+        state: stopped
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install apt-transport-https
+      include_role:
+        name: installubuntupkg
+      vars:
+        package: apt-transport-https
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Configure Elasticsearch (Ubuntu)
+      include_role:
+        name: configubuntues
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install Java [Elastic search dependency] (CentOS)
+      include_role:
+        name: installcentospkg
+      vars:
+        package: java-1.8.0-openjdk
+      when: ansible_facts['distribution'] == 'CentOS'
+
+    - name: Configuring Elastic Search (CentOS)
+      include_role:
+        name: configcentoses
+      when: ansible_facts['distribution'] == 'CentOS'
+
+- name: Install and Configure Kibana
+  hosts: kibana
+  tags: kibana,ubuntu,centos
+  tasks:
+    - name: Include vars
+      include_vars:
+        file: config.yml
+
+    - name: Install Kibana (Ubuntu)
+      include_role:
+        name: installubuntupkg
+      vars:
+        package: kibana
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Configure Kibana (Ubuntu)
+      include_role:
+        name: configubuntukibana
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install Kibana (CentOS)
+      include_role:
+        name: installcentospkg
+      vars:
+        package: kibana
+      when: ansible_facts['distribution'] == 'CentOS'
+
+    - name: Configure Kibana (CentOS)
+      include_role:
+        name: configcentoskibana
+      when: ansible_facts['distribution'] == 'CentOS'
+
+- name: Install and Configure Logstash
+  hosts: logstash
+  tags: logstash,ubuntu,centos
+  tasks:
+    - name: Install Logstash (Ubuntu)
+      include_role:
+        name: installubuntupkg
+      vars:
+        package: logstash
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Configure Logstash (Ubuntu)
+      include_role:
+        name: configubuntulogstash
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install logstash (CentOS)
+      include_role:
+        name: installcentospkg
+      vars:
+        package: logstash
+      when: ansible_facts['distribution'] == 'CentOS'
+
+    - name: Configure logstash (CentOS)
+      include_role:
+        name: configcentoslogstash
+      when: ansible_facts['distribution'] == 'CentOS'
+
+- name: Install and configure Nagios
+  hosts: nagios
+  tags: nagios,ubuntu,centos
+  tasks:
+    - name: Include variables
+      include_vars:
+        file: config.yml
+
+    - name: Stopping Nginx
+      service:
+        name: nginx
+        state: stopped
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install Nagios dependencies (Ubuntu)
+      include_role:
+        name: installubuntupkg
+      vars:
+        package:
+          - autoconf
+          - gcc
+          - libc6
+          - make
+          - wget
+          - unzip
+          - apache2
+          - php
+          - libapache2-mod-php7.4
+          - libgd-dev
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install Nagios dependencies (CentOS)
+      include_role:
+        name: installcentospkg
+      vars:
+        package:
+          - gcc
+          - glibc
+          - glibc-common
+          - perl
+          - httpd
+          - php
+          - wget
+          - gd
+          - gd-devel
+      when: ansible_facts['distribution'] == 'CentOS'
+
+    - name: Configure Nagios (Ubuntu)
+      include_role:
+        name: configubuntunagios
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Configure Nagios (CentOS)
+      include_role:
+        name: configcentosnagios
+      when: ansible_facts['distribution'] == 'CentOS'
+    
+    - name: Stop UFW
+      include_role:
+        name: stopufw
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Stop Firewalld
+      include_role:
+        name: stopfirewalld
+      when: ansible_facts['distribution'] == 'CentOS'
+
+- name: Install and Configure Grafana
+  hosts: grafana
+  tags: grafana,ubuntu,centos
+  tasks:
+    - name: Include variables
+      include_vars:
+        file: config.yml
+
+    - name: Install and configure grafana (Ubuntu)
+      include_role:
+        name: configubuntugrafana
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install and configure grafana (CentOS)
+      include_role:
+        name: configcentosgrafana
+      when: ansible_facts['distribution'] == 'CentOS'
+
+    - name: Stop UFW
+      include_role:
+        name: stopufw
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Stop Firewalld
+      include_role:
+        name: stopfirewalld
+      when: ansible_facts['distribution'] == 'CentOS'
+
+- name: Install and Configure Prometheus
+  hosts: prom
+  tags: prom,ubuntu,centos
+  tasks:
+    - name: Including variables
+      include_vars:
+        file: config.yml
+
+    - name: Stopping apache2
+      service:
+        name: apache2
+        state: stopped
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Stopping httpd
+      service:
+        name: httpd
+        state: stopped
+      when: ansible_facts['distribution'] == 'CentOS'
+
+    - name: Install and configure prometheus (Ubuntu)
+      include_role:
+        name: configubuntuprom
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install and configure prometheus (CentOS)
+      include_role:
+        name: configcentosprom
+      when: ansible_facts['distribution'] == 'CentOS'
+
+
+
+
